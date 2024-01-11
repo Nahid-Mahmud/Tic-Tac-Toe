@@ -1,9 +1,44 @@
-import React from "react";
+import { Fragment, useState } from "react";
 
-export default function App() {
+function Squire() {
+  // state for the value of the button
+
+  const [value, setValue] = useState(null);
+
+  // Button Click Handler
+  const handleClick = () => {
+    setValue("X");
+  };
+
   return (
-    <div>
-      <h1 className="text-5xl">Tail wind </h1>
-    </div>
+    <Fragment>
+      <button onClick={handleClick} className=" bg-white border border-gray-700 h-20 w-20 m-1 leading-9 text-lg ">
+        {value}
+      </button>
+    </Fragment>
+  );
+}
+
+export default function Board() {
+  return (
+    <Fragment>
+      <div className="flex">
+        <Squire />
+        <Squire />
+        <Squire />
+      </div>
+
+      <div className="flex">
+        <Squire />
+        <Squire />
+        <Squire />
+      </div>
+
+      <div className="flex">
+        <Squire />
+        <Squire />
+        <Squire />
+      </div>
+    </Fragment>
   );
 }
