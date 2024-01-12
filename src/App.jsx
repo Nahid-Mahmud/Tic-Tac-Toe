@@ -14,12 +14,7 @@ function Squire({ value, onSquireClick }) {
   );
 }
 
-export default function Board() {
-  // state for all squires
-  const [squires, setSquires] = useState(Array(9).fill(null));
-  // state for next player
-  const [xIsNext, setXIsNext] = useState(true);
-
+function Board({ xIsNext, squires, onPlay }) {
   const winner = calculateWinner(squires);
   let status;
   if (winner) {
@@ -38,10 +33,7 @@ export default function Board() {
     } else {
       nextSquires[index] = "O";
     }
-
-    setSquires(nextSquires);
-    setXIsNext((prev) => !prev);
-    // console.log(squires);
+    onPlay(nextSquires);
   };
   return (
     <Fragment>
@@ -64,6 +56,57 @@ export default function Board() {
         <Squire value={squires[8]} onSquireClick={() => handleClick(8)} />
       </div>
     </Fragment>
+  );
+}
+
+export default function Game() {
+  // state for all squires
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  // state for next player
+  const [xIsNext, setXIsNext] = useState(true);
+
+  // current m0ve
+
+  const [currentMove, setCurrentMove] = useState(0);
+
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquares) {
+    setXIsNext((prev) => !prev);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  }
+
+  //Jup to function
+  const jumpTo = (move) => {
+    setCurrentMove(move);
+    setXIsNext(!!(move % 2 === 0));
+  };
+  // setting the history
+  const moves = history.map((squires, move) => {
+    let description;
+    if (move > 0) {
+      description = `Go to move # ${move}`;
+    } else {
+      description = "Make Your First Move";
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}> {description} </button>
+      </li>
+    );
+  });
+
+  return (
+    <div>
+      <div>
+        <Board xIsNext={xIsNext} squires={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div>
+        <ol>{moves}</ol>
+      </div>
+    </div>
   );
 }
 
