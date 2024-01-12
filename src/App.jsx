@@ -4,7 +4,10 @@ import { Fragment, useState } from "react";
 function Squire({ value, onSquireClick }) {
   return (
     <Fragment>
-      <button onClick={onSquireClick} className=" bg-white border border-gray-700 h-20 w-20 m-1 leading-9 text-lg ">
+      <button
+        onClick={onSquireClick}
+        className=" bg-white border border-gray-700 h-20 w-20 m-1 leading-9 text-2xl font-bold "
+      >
         {value}
       </button>
     </Fragment>
@@ -12,16 +15,37 @@ function Squire({ value, onSquireClick }) {
 }
 
 export default function Board() {
+  // state for all squires
   const [squires, setSquires] = useState(Array(9).fill(null));
+  // state for next player
+  const [xIsNext, setXIsNext] = useState(true);
+
+  const winner = calculateWinner(squires);
+  let status;
+  if (winner) {
+    status = `Winner: ${winner}`;
+  } else {
+    status = `Next player: ${xIsNext ? "X" : "O"}`;
+  }
+  // function for click
   const handleClick = (index) => {
-    // console.log("clicked");
     const nextSquires = squires.slice();
-    nextSquires[index] = "X";
+
+    if (squires[index] || calculateWinner(squires)) return;
+
+    if (xIsNext) {
+      nextSquires[index] = "X";
+    } else {
+      nextSquires[index] = "O";
+    }
+
     setSquires(nextSquires);
+    setXIsNext((prev) => !prev);
     // console.log(squires);
   };
   return (
     <Fragment>
+      <div>{status}</div>
       <div className="flex">
         <Squire value={squires[0]} onSquireClick={() => handleClick(0)} />
         <Squire value={squires[1]} onSquireClick={() => handleClick(1)} />
@@ -41,4 +65,24 @@ export default function Board() {
       </div>
     </Fragment>
   );
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
 }
